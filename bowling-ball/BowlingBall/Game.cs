@@ -1,22 +1,45 @@
-﻿using System;
+﻿using BowlingBall.Interface;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BowlingBall
 {
     public class Game
     {
+        private readonly List<IFrame> frames = new List<IFrame>();
+
+        /// <summary>
+        /// allocartes the pins to roll to existing frame and new frames
+        /// </summary>
+        /// <param name="pins"></param>
         public void Roll(int pins)
         {
-            // Add your logic here. Add classes as needed.
-        }
+          
+            if (!frames.Any() || frames.Last().IsClosed())
+            {
+                frames.Add(FrameFactory.GetFrame(frames.Count));
+            }
 
+            frames.Last().RegisterRoll(pins);
+        }
+        /// <summary>
+        /// The get score methods aggregates sum of individual frame
+        /// </summary>
+        /// <returns></returns>
         public int GetScore()
         {
-            // Returns the final score of the game.
-            return 0;
+
+            int score = 0;
+
+            for (var frameIndex = 0; frameIndex < frames.Count; frameIndex++)
+            {
+
+               score += frames[frameIndex].GetScore(frameIndex, this.frames);
+
+            }
+            return score;
         }
+
+
     }
 }
